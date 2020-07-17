@@ -1,0 +1,67 @@
+
+
+
+
+#######################subdomain enum####################
+findomain(){
+./findomain-linux -t $1
+}
+
+crtsh(){
+curl -s https://crt.sh/?q\=%.$1\&output\=json | jq -r '.[].name_value' | sed 's/\*\.//g'
+}
+
+
+assetfinder(){
+~/go/bin/assetfinder --subs-only $1
+}
+
+
+#####################Probing##########################
+httprobe(){
+~/go/bin/httprobe $1
+}
+
+urlprobe(){
+~/go/bin/urlprobe $1 -c 1000 -t 05  #if u want 200 ones only then add -s 200
+}
+
+response(){
+curl -I -s $1
+}
+
+ipfinder(){
+~/resolveip/resolveip.sh $1 #return the ip address of hosts
+}
+
+######################Fuzzing##########################
+ffuf1(){
+~/go/bin/ffuf -c -w ~/SecLists/Discovery/Web-Content/raft-large-directories.txt -u $1/FUZZ
+}
+
+ffuf2(){
+~/go/bin/ffuf -c -w ~/Seclists/Discovery/Web-Content/quickhits.txt -u $1/FUZZ
+}
+
+ffuf3(){
+~/go/bin/ffuf -c -w  ~/bruteforce/files.txt -u $1
+}
+
+ffuf4(){
+~/go/bin/ffuf -c -w ~/bruteforce/params.txt -u $1
+
+#######################################################
+
+checker(){
+cat $1 | parallel -j50 -q curl -w 'Status:%{http_code}\t  Size:%{size_download}\t %{url_effective}\n' -o /dev/null -sk
+}
+
+waybackurl(){
+~/go/bin/waybackurls $1
+}
+
+gau(){
+~/go/bin/gau $1   #gau -subs example.com | cut -d / -f 3 | sort -u
+}
+
+                                                         
